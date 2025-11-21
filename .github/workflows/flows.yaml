@@ -58,7 +58,7 @@ jobs:
 
             # If repo does not exist, clone it
             if [ ! -d "docker-voting-app" ]; then
-              git clone https://github.com/mdzihad22/docker-voting-app.git
+              git clone https://github.com/ZIHAD22/docker-voting-app.git
             else
               cd docker-voting-app
               git pull origin main
@@ -69,7 +69,20 @@ jobs:
 
             echo "Using latest docker-compose.yml..."
 
-            # Deploy using updated compose file
+            if [ ! -f ".env" ]; then
+              echo "Creating .env file"
+              touch .env
+            fi
+
+            if ! grep -q "^IMAGE_TAG=" .env; then
+              echo "IMAGE_TAG=placeholder" >> .env
+            fi
+
+            sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${{ env.IMAGE_TAG }}/" .env
+
+            echo "Updated IMAGE_TAG to ${{ env.IMAGE_TAG }}"
+
+            #Deploy using updated compose file
             docker compose pull
             docker compose up -d
 
