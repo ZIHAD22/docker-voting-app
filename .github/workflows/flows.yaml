@@ -85,5 +85,7 @@ jobs:
             #Deploy using updated compose file
             docker compose pull
             docker compose up -d
+            docker exec -it backend sh
+            node seed.js
 
             echo "Deployment complete!"
