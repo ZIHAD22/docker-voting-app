@@ -1,0 +1,43 @@
+services:
+  mongo:
+    image: mongo
+    container_name: database
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+
+  mongo-express:
+    image: mongo-express
+    container_name: database-gui
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://admin:admin@mongo:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    depends_on:
+      - mongo
+
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - 3001:3001
+    environment:
+      MONGODB_URI: mongodb://admin:admin@mongo:27017/bangladesh-voting?authSource=admin
+      NODE_ENV: production
+      FRONTEND_URL: http://localhost
+      JWT_SECRET: A7+eejrYnPiUTAFHRnZAol6M+oxJ71c1aR6BNl9IrKobMXfCtorNcycggCtNuAMlMgHoCSaOBEPbE6d0+u1usA==
+      PORT: 3001
+    depends_on:
+      - mongo
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - 80:80
+    depends_on:
+      - backend
