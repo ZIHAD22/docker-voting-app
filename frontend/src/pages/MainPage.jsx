@@ -51,7 +51,7 @@ const MainPage = ({ user, elections, onLogout, loading, error }) => {
             <div className="bd-flag-mini">
               <div className="flag-circle-mini"></div>
             </div>
-            <h1>🗳️ BD Voting</h1>
+            <h1>🗳️ BD Voting2.0 </h1>
           </div>
           <div className="user-info">
             <div className="user-avatar">
