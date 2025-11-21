@@ -43,34 +43,34 @@ jobs:
           docker push mdzihad22/ngi-front:${{env.IMAGE_TAG}}
 
   deploy_to_ec2:
-  runs-on: runner-1
-  needs: build_and_push
+    runs-on: runner-1
+    needs: build_and_push
 
-  steps:
-    - name: Deploy to EC2
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.EC2_SERVER_HOST }}
-        username: ${{ secrets.EC2_SERVER_USER }}
-        key: ${{ secrets.EC2_SERVER_SSH_KEY }}
-        script: |
-          cd /home/ubuntu
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_SERVER_HOST }}
+          username: ${{ secrets.EC2_SERVER_USER }}
+          key: ${{ secrets.EC2_SERVER_SSH_KEY }}
+          script: |
+            cd /home/ubuntu
 
-          # If repo does not exist, clone it
-          if [ ! -d "docker-voting-app" ]; then
-            git clone https://github.com/mdzihad22/docker-voting-app.git
-          else
+            # If repo does not exist, clone it
+            if [ ! -d "docker-voting-app" ]; then
+              git clone https://github.com/mdzihad22/docker-voting-app.git
+            else
+              cd docker-voting-app
+              git pull origin main
+              cd ..
+            fi
+
             cd docker-voting-app
-            git pull origin main
-            cd ..
-          fi
 
-          cd docker-voting-app
+            echo "Using latest docker-compose.yml..."
 
-          echo "Using latest docker-compose.yml..."
+            # Deploy using updated compose file
+            docker compose pull
+            docker compose up -d
 
-          # Deploy using updated compose file
-          docker compose pull
-          docker compose up -d
-
-          echo "Deployment complete!"
+            echo "Deployment complete!"
